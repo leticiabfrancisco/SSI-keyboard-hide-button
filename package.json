@@ -1,0 +1,23 @@
+{
+  "name": "self-issuing-copilot-skill",
+  "displayName": "Self Service Issuing - Copilot Skill",
+  "description": "Copilot skill for the Tax Free Self Service Issuing kiosk app (iPad)",
+  "version": "0.1.0",
+  "publisher": "weareplanet-taxfree",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": ["Other"],
+  "contributes": {
+    "chatParticipants": [],
+    "languageModelTools": []
+  },
+  "extensionDependencies": [],
+  "keywords": [
+    "tax-free",
+    "self-issuing",
+    "kiosk",
+    "ipad",
+    "copilot-skill"
+  ]
+}
