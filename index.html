@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Self-Issuing Prototypes</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      body {
+        font-family: 'Inter', sans-serif;
+        background: #f4f4f5;
+        min-height: 100vh;
+        padding: 48px 24px;
+        color: #18181b;
+      }
+      h1 { font-size: 22px; font-weight: 600; margin-bottom: 8px; }
+      p.subtitle { font-size: 14px; color: #71717a; margin-bottom: 32px; }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 16px;
+        max-width: 960px;
+      }
+      a.card {
+        background: #fff;
+        border: 1px solid #e4e4e7;
+        border-radius: 12px;
+        padding: 20px 24px;
+        text-decoration: none;
+        color: inherit;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        transition: box-shadow 0.15s, border-color 0.15s;
+      }
+      a.card:hover {
+        border-color: #a1a1aa;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+      }
+      a.card .label {
+        font-size: 14px;
+        font-weight: 500;
+      }
+      a.card .tag {
+        font-size: 12px;
+        color: #71717a;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Self-Issuing Prototypes</h1>
+    <p class="subtitle">Click any card to open the prototype</p>
+    <div class="grid">
+      <a class="card" href="profile-step-preview.html">
+        <span class="label">iPad — Profile Step</span>
+        <span class="tag">Pattern A · Input Accessory Toolbar</span>
+      </a>
+      <a class="card" href="profile-step-pattern-c-preview.html">
+        <span class="label">iPad — Profile Step</span>
+        <span class="tag">Pattern C</span>
+      </a>
+      <a class="card" href="ipad-keyboard-done-preview.html">
+        <span class="label">iPad — Keyboard Done</span>
+        <span class="tag">Keyboard interaction</span>
+      </a>
+      <a class="card" href="flow-preview.html">
+        <span class="label">Flow</span>
+        <span class="tag">Full flow preview</span>
+      </a>
+      <a class="card" href="onboarding-preview.html">
+        <span class="label">Onboarding</span>
+        <span class="tag">Onboarding screen</span>
+      </a>
+      <a class="card" href="mobile-receipts-preview.html">
+        <span class="label">Mobile — Receipts</span>
+        <span class="tag">Mobile screen</span>
+      </a>
+      <a class="card" href="mobile-payment-method-preview.html">
+        <span class="label">Mobile — Payment Method</span>
+        <span class="tag">Mobile screen</span>
+      </a>
+      <a class="card" href="staff-language-intervention-preview.html">
+        <span class="label">Staff Language Intervention</span>
+        <span class="tag">Base screen</span>
+      </a>
+      <a class="card" href="staff-language-intervention-translate-button-preview.html">
+        <span class="label">Staff Language Intervention</span>
+        <span class="tag">Translate button</span>
+      </a>
+      <a class="card" href="staff-language-intervention-logo-translate-preview.html">
+        <span class="label">Staff Language Intervention</span>
+        <span class="tag">Logo + translate</span>
+      </a>
+      <a class="card" href="staff-language-intervention-logo-only-preview.html">
+        <span class="label">Staff Language Intervention</span>
+        <span class="tag">Logo only</span>
+      </a>
+    </div>
+  </body>
+</html>
