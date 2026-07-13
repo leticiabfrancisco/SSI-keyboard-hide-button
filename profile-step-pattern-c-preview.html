@@ -1,0 +1,624 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>iPad — Profile Step (Pattern C: Floating Hide-Keyboard Button)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet" />
+    <style>
+      /* ── Planet / Solar DS tokens ── */
+      :root {
+        --surface:        #f4f4f5;
+        --paper:          #fafafa;
+        --text:           #18181b;
+        --text-secondary: #52525b;
+        --divider:        #e4e4e7;
+        --outline-low:    #a1a1aa;
+        --primary:        #18181b;
+        --shadow-card:
+          rgba(54, 48, 163, 0)    171px 244px 83px 0px,
+          rgba(54, 48, 163, 0.01) 109px 156px 76px 0px,
+          rgba(54, 48, 163, 0.02)  62px  88px 64px 0px,
+          rgba(54, 48, 163, 0.03)  27px  39px 48px 0px,
+          rgba(54, 48, 163, 0.04)   7px  10px 26px 0px;
+      }
+
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+
+      body {
+        background: #d1d1d6;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        font-family: 'Inter', sans-serif;
+        color: var(--text);
+        padding: 32px;
+      }
+
+      .ms {
+        font-family: 'Material Symbols Rounded';
+        font-size: 22px;
+        line-height: 1;
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        user-select: none;
+      }
+
+      /* ── iPad landscape shell ── */
+      .ipad {
+        width: 1214px;
+        height: 854px;
+        background: var(--surface);
+        border-radius: 20px;
+        box-shadow: 0 40px 80px -20px rgba(0,0,0,0.45),
+                    inset 0 0 0 1px rgba(255,255,255,0.10);
+        border: 10px solid #2a2a2c;
+        overflow: hidden;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .home-bar {
+        position: absolute;
+        bottom: 6px; left: 50%;
+        transform: translateX(-50%);
+        width: 120px; height: 4px;
+        border-radius: 2px;
+        background: rgba(0,0,0,0.25);
+        z-index: 10;
+      }
+
+      /* ── PageHead ── */
+      .topbar {
+        flex-shrink: 0;
+        height: 57px;
+        background: var(--paper);
+        border-bottom: 1px solid var(--divider);
+        display: flex; align-items: center;
+        padding: 0 16px; gap: 8px;
+      }
+      .planet-logo { width: 24px; height: 24px; flex-shrink: 0; }
+      .planet-logo img { width: 24px; height: 24px; display: block; }
+      .topbar-title { font-size: 17px; font-weight: 700; letter-spacing: -0.17px; }
+
+      /* ── Content area ── */
+      .content-wrap {
+        flex: 1;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 32px 24px 0;
+      }
+
+      .content-inner {
+        width: 100%; max-width: 800px;
+        display: flex; flex-direction: column;
+        gap: 24px; padding-bottom: 32px;
+      }
+
+      /* ── Stepper ── */
+      .stepper {
+        display: flex; align-items: center; justify-content: center;
+        gap: 8px; width: 384px; margin: 0 auto 32px;
+      }
+      .step { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+      .step-circle {
+        width: 28px; height: 28px; border-radius: 50%;
+        background: #18181b; color: #fff;
+        font-size: 12px; font-weight: 600;
+        display: flex; align-items: center; justify-content: center;
+        flex-shrink: 0;
+      }
+      .step.future .step-circle { background: var(--outline-low); }
+      .step-label { font-size: 13px; font-weight: 500; color: var(--text-secondary); white-space: nowrap; }
+      .step.active .step-label { color: var(--text); font-weight: 700; }
+      .step-dash { font-size: 13px; color: var(--text-secondary); flex-shrink: 0; }
+
+      /* ── Cards ── */
+      .card {
+        background: var(--paper);
+        border-radius: 24px;
+        box-shadow: var(--shadow-card);
+        padding: 24px;
+      }
+      .card-title {
+        font-size: 24px; font-weight: 500;
+        letter-spacing: -1px; line-height: 1.4;
+        color: var(--text); margin-bottom: 16px;
+      }
+
+      /* ── Personal details grid ── */
+      .details-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0; border-radius: 8px; overflow: hidden;
+      }
+      .detail-cell { padding: 12px 16px; }
+      .detail-label { font-size: 12px; font-weight: 500; color: var(--text-secondary); margin-bottom: 4px; }
+      .detail-value { font-size: 14px; font-weight: 500; color: var(--text); display: flex; align-items: center; gap: 6px; }
+
+      .btn-rescan {
+        width: 100%; height: 48px; margin-top: 16px;
+        border: 1.5px solid var(--divider); border-radius: 8px;
+        background: transparent; color: var(--text);
+        font-size: 15px; font-weight: 500;
+        font-family: 'Inter', sans-serif; cursor: pointer;
+        display: flex; align-items: center; justify-content: center; gap: 8px;
+      }
+      .btn-rescan:hover { background: #f4f4f5; }
+
+      /* ── Country dropdown ── */
+      .dropdown-field {
+        position: relative;
+        border: 1px solid var(--divider); border-radius: 8px;
+        padding: 14px 16px; background: transparent;
+        display: flex; align-items: center; justify-content: space-between;
+        cursor: pointer;
+      }
+      .dropdown-label {
+        position: absolute; top: -8px; left: 12px;
+        background: var(--paper); padding: 0 4px;
+        font-size: 12px; color: var(--text-secondary); font-weight: 500;
+      }
+      .dropdown-value { display: flex; align-items: center; gap: 8px; font-size: 16px; }
+      .dropdown-value .flag { font-size: 18px; }
+
+      /* ── Email field ── */
+      .email-wrapper { position: relative; border-radius: 8px; }
+      .email-wrapper input {
+        width: 100%; height: 56px; padding: 14px 16px;
+        border: 1px solid var(--divider); border-radius: 8px;
+        font-size: 16px; font-family: 'Inter', sans-serif;
+        color: var(--text); background: transparent; outline: none;
+        transition: border-color 200ms ease;
+      }
+      .email-wrapper input:focus { border-color: var(--primary); border-width: 2px; }
+      .email-wrapper .field-label {
+        position: absolute; top: -8px; left: 12px;
+        background: var(--paper); padding: 0 4px;
+        font-size: 12px; color: var(--text-secondary); font-weight: 500;
+        pointer-events: none; transition: color 200ms ease;
+      }
+      .email-wrapper input:focus ~ .field-label { color: var(--primary); }
+
+      /* ── Footer ── */
+      .footer {
+        flex-shrink: 0; height: 104px;
+        border-top: 1px solid var(--divider);
+        background: var(--paper); padding: 0 24px;
+        display: flex; align-items: center; justify-content: space-between;
+        position: relative; z-index: 5;
+      }
+      .btn-cancel {
+        height: 52px; padding: 0 24px;
+        border: 1.5px solid var(--divider); border-radius: 8px;
+        background: transparent; color: var(--text);
+        font-size: 18px; font-weight: 600; font-family: 'Inter', sans-serif;
+        cursor: pointer;
+      }
+      .footer-right { display: flex; align-items: center; gap: 16px; }
+      .btn-back {
+        height: 52px; padding: 0 16px;
+        border: none; background: transparent; color: var(--text);
+        font-size: 18px; font-weight: 600; font-family: 'Inter', sans-serif;
+        cursor: pointer; display: flex; align-items: center; gap: 4px;
+      }
+      .btn-next {
+        height: 52px; padding: 0 32px;
+        border: none; border-radius: 8px;
+        background: var(--primary); color: #fff;
+        font-size: 18px; font-weight: 600; font-family: 'Inter', sans-serif;
+        cursor: pointer; box-shadow: var(--shadow-card);
+      }
+
+      /* ══════════════════════════════════════════════════════
+         PATTERN C — Floating hide-keyboard button
+         ══════════════════════════════════════════════════════
+
+         No accessory toolbar row. Instead, a circular dark
+         button (keyboard icon + down chevron) floats at the
+         top-right edge of the keyboard tray — exactly like
+         the iPadOS system hide-keyboard button.
+
+         The keyboard panel is in-flow (not absolute), so it
+         physically pushes content up just like Pattern A.
+      */
+
+      /* Keyboard panel — in-flow, height-animated */
+      .keyboard-panel {
+        flex-shrink: 0;
+        overflow: hidden;
+        height: 0;
+        display: flex;
+        flex-direction: column;
+        transition: height 300ms cubic-bezier(0.32, 0.72, 0, 1);
+      }
+      .ipad.keyboard-open .keyboard-panel {
+        height: var(--kbd-h, 301px);
+      }
+
+      /* ── Floating hide-keyboard button ── */
+      .float-kbd-btn {
+        position: absolute;
+        right: 16px;
+        /* sits just above the keyboard tray top edge */
+        bottom: calc(var(--kbd-h, 301px) - 34px);
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        background: rgba(44, 44, 48, 0.88);
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 30;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 220ms ease,
+                    bottom 300ms cubic-bezier(0.32, 0.72, 0, 1),
+                    transform 80ms ease,
+                    background 80ms ease;
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.35);
+      }
+      .float-kbd-btn:hover  { background: rgba(60, 60, 64, 0.92); }
+      .float-kbd-btn:active { transform: scale(0.93); }
+
+      .ipad.keyboard-open .float-kbd-btn {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      /* ── Suggestion strip ── */
+      .kbd-hint-strip {
+        background: #cdd0d5;
+        border-top: 1px solid rgba(0,0,0,0.08);
+        height: 46px;
+        display: flex; align-items: center;
+        padding: 0 6px; gap: 4px;
+      }
+      .hint-chip {
+        flex: 1; height: 34px;
+        background: #fff; border-radius: 6px;
+        box-shadow: 0 1px 0 rgba(0,0,0,0.25);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 15px; color: var(--text); cursor: pointer;
+      }
+
+      /* ── Keyboard tray ── */
+      .kbd-tray {
+        background: #cdd0d5;
+        padding: 8px 6px 16px;
+        display: flex; flex-direction: column; gap: 7px;
+      }
+      .kbd-row { display: flex; gap: 6px; align-items: stretch; height: 54px; }
+      .kbd-row.bottom { height: 48px; }
+
+      .key {
+        background: #fff; border-radius: 7px;
+        display: flex; align-items: center; justify-content: center;
+        box-shadow: 0 1px 0 1px rgba(0,0,0,0.32);
+        cursor: pointer; user-select: none; -webkit-user-select: none;
+        font-family: 'Inter', sans-serif; color: var(--text);
+        font-size: 22px; font-weight: 300;
+        transition: background 60ms; position: relative; flex: 1;
+      }
+      .key:active { background: #d8dbe0; }
+      .key.letter { padding-top: 10px; }
+      .k-hint {
+        position: absolute; top: 5px; left: 50%;
+        transform: translateX(-50%);
+        font-size: 11px; font-weight: 400;
+        color: rgba(0,0,0,0.38); line-height: 1; pointer-events: none;
+      }
+      .key.mod { background: #adb4be; font-size: 14px; font-weight: 500; letter-spacing: -0.2px; }
+      .key.mod:active { background: #9ba3ad; }
+      .key.go { background: #007aff; color: #fff; font-size: 16px; font-weight: 500; }
+      .key.go:active { background: #0066d6; }
+      .key.space { font-size: 0; }
+
+      .k-tab  { flex: 0 0 7.2%; }
+      .k-del  { flex: 0 0 8.2%; }
+      .k-caps { flex: 0 0 9.3%; }
+      .k-go   { flex: 0 0 12.2%; }
+      .k-shft { flex: 0 0 11.8%; }
+      .k-glb  { flex: 0 0 4.3%; }
+      .k-num  { flex: 0 0 5.4%; }
+      .k-mic  { flex: 0 0 4.3%; }
+      .k-dsh  { flex: 0 0 4.5%; }
+      .k-kbd  { flex: 0 0 5.4%; }
+    </style>
+  </head>
+  <body>
+    <div class="ipad" id="ipad">
+      <div class="home-bar"></div>
+
+      <!-- PageHead -->
+      <div class="topbar">
+        <div class="planet-logo">
+          <img src="assets/planet-p-icon-black.svg" alt="Planet" />
+        </div>
+        <span class="topbar-title">Tax Free form</span>
+      </div>
+
+      <!-- Content -->
+      <div class="content-wrap" id="contentWrap">
+        <div class="content-inner">
+
+          <!-- Stepper -->
+          <div class="stepper">
+            <div class="step done">
+              <div class="step-circle">✓</div>
+              <span class="step-label">Receipts</span>
+            </div>
+            <span class="step-dash">–</span>
+            <div class="step active">
+              <div class="step-circle">2</div>
+              <span class="step-label">Profile</span>
+            </div>
+            <span class="step-dash">–</span>
+            <div class="step future">
+              <div class="step-circle">3</div>
+              <span class="step-label">Refund</span>
+            </div>
+            <span class="step-dash">–</span>
+            <div class="step future">
+              <div class="step-circle">4</div>
+              <span class="step-label">Form</span>
+            </div>
+          </div>
+
+          <!-- Card 1: Personal details -->
+          <div class="card">
+            <p class="card-title">Confirm personal details</p>
+            <div class="details-grid">
+              <div class="detail-cell">
+                <p class="detail-label">Document number</p>
+                <p class="detail-value">P123456AA</p>
+              </div>
+              <div class="detail-cell">
+                <p class="detail-label">Document date of expiry</p>
+                <p class="detail-value">03/12/2027</p>
+              </div>
+              <div class="detail-cell">
+                <p class="detail-label">Document country</p>
+                <p class="detail-value">🇬🇧 United Kingdom</p>
+              </div>
+              <div class="detail-cell">
+                <p class="detail-label">Date of birth</p>
+                <p class="detail-value">01/01/1990</p>
+              </div>
+              <div class="detail-cell">
+                <p class="detail-label">Given names</p>
+                <p class="detail-value">Sarah</p>
+              </div>
+              <div class="detail-cell">
+                <p class="detail-label">Surname</p>
+                <p class="detail-value">Martin</p>
+              </div>
+            </div>
+            <button class="btn-rescan">
+              <span class="ms">photo_camera</span>
+              Try scanning again
+            </button>
+          </div>
+
+          <!-- Card 2: Country of residence -->
+          <div class="card">
+            <p class="card-title">Choose your country of residence</p>
+            <div class="dropdown-field">
+              <span class="dropdown-label">Country of residence *</span>
+              <div class="dropdown-value">
+                <span class="flag">🇬🇧</span>
+                United Kingdom
+              </div>
+              <span class="ms" style="color:var(--text-secondary);font-size:20px;">keyboard_arrow_down</span>
+            </div>
+          </div>
+
+          <!-- Card 3: Email -->
+          <div class="card" id="emailCard">
+            <p class="card-title">Add an email to get your form</p>
+            <p style="font-size:14px;color:var(--text-secondary);margin-bottom:16px;">No spam or marketing emails</p>
+            <div class="email-wrapper">
+              <input type="email" id="emailInput" autocomplete="off" placeholder=" " />
+              <span class="field-label">Email *</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="footer">
+        <button class="btn-cancel">Cancel</button>
+        <div class="footer-right">
+          <button class="btn-back">
+            <span class="ms" style="font-size:20px;margin-right:2px;">chevron_left</span>
+            Back
+          </button>
+          <button class="btn-next">Next</button>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════
+           PATTERN C — Keyboard panel (no toolbar)
+           Suggestion strip + QWERTY only.
+           Dismiss is via the floating button.
+           ══════════════════════════════════════ -->
+      <div class="keyboard-panel" id="keyboardPanel">
+
+        <!-- Suggestion strip -->
+        <div class="kbd-hint-strip">
+          <div class="hint-chip">sarah</div>
+          <div class="hint-chip">sarah.martin</div>
+          <div class="hint-chip">@gmail.com</div>
+        </div>
+
+        <!-- QWERTY keyboard -->
+        <div class="kbd-tray">
+          <div class="kbd-row">
+            <div class="key mod k-tab">tab</div>
+            <div class="key letter" data-char="q"><span class="k-hint">1</span>q</div>
+            <div class="key letter" data-char="w"><span class="k-hint">2</span>w</div>
+            <div class="key letter" data-char="e"><span class="k-hint">3</span>e</div>
+            <div class="key letter" data-char="r"><span class="k-hint">4</span>r</div>
+            <div class="key letter" data-char="t"><span class="k-hint">5</span>t</div>
+            <div class="key letter" data-char="y"><span class="k-hint">6</span>y</div>
+            <div class="key letter" data-char="u"><span class="k-hint">7</span>u</div>
+            <div class="key letter" data-char="i"><span class="k-hint">8</span>i</div>
+            <div class="key letter" data-char="o"><span class="k-hint">9</span>o</div>
+            <div class="key letter" data-char="p"><span class="k-hint">0</span>p</div>
+            <div class="key mod k-del" data-action="backspace">delete</div>
+          </div>
+          <div class="kbd-row">
+            <div class="key mod k-caps">caps lock</div>
+            <div class="key letter" data-char="a"><span class="k-hint">@</span>a</div>
+            <div class="key letter" data-char="s"><span class="k-hint">#</span>s</div>
+            <div class="key letter" data-char="d"><span class="k-hint">$</span>d</div>
+            <div class="key letter" data-char="f"><span class="k-hint">&amp;</span>f</div>
+            <div class="key letter" data-char="g"><span class="k-hint">*</span>g</div>
+            <div class="key letter" data-char="h"><span class="k-hint">(</span>h</div>
+            <div class="key letter" data-char="j"><span class="k-hint">)</span>j</div>
+            <div class="key letter" data-char="k"><span class="k-hint">'</span>k</div>
+            <div class="key letter" data-char="l"><span class="k-hint">"</span>l</div>
+            <div class="key mod go k-go" data-action="go">go</div>
+          </div>
+          <div class="kbd-row">
+            <div class="key mod k-shft">shift</div>
+            <div class="key letter" data-char="z"><span class="k-hint">%</span>z</div>
+            <div class="key letter" data-char="x"><span class="k-hint">-</span>x</div>
+            <div class="key letter" data-char="c"><span class="k-hint">+</span>c</div>
+            <div class="key letter" data-char="v"><span class="k-hint">=</span>v</div>
+            <div class="key letter" data-char="b"><span class="k-hint">/</span>b</div>
+            <div class="key letter" data-char="n"><span class="k-hint">;</span>n</div>
+            <div class="key letter" data-char="m"><span class="k-hint">:</span>m</div>
+            <div class="key letter" data-char="@"><span class="k-hint">,</span>@</div>
+            <div class="key letter" data-char="."><span class="k-hint">?</span>.</div>
+            <div class="key mod k-shft">shift</div>
+          </div>
+          <div class="kbd-row bottom">
+            <div class="key mod k-glb">🌐</div>
+            <div class="key mod k-num">.?123</div>
+            <div class="key mod k-mic">🎤</div>
+            <div class="key space"></div>
+            <div class="key mod k-dsh" data-char="–">–</div>
+            <div class="key mod k-dsh" data-char="-">-</div>
+            <div class="key mod k-kbd" data-action="hidekbd">⌨</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════
+           PATTERN C — Floating hide-keyboard button
+           Appears at the top-right of the keyboard tray.
+           ══════════════════════════════════════ -->
+      <button class="float-kbd-btn" id="hideKbdBtn" title="Hide keyboard" aria-label="Hide keyboard">
+        <!-- Keyboard icon + down chevron, matching iPadOS system button style -->
+        <svg viewBox="0 0 46 38" fill="none" xmlns="http://www.w3.org/2000/svg" width="38" height="30">
+          <!-- Keyboard outline -->
+          <rect x="1" y="1" width="44" height="24" rx="4" stroke="white" stroke-width="2"/>
+          <!-- Row 1: 5 keys -->
+          <rect x="5"  y="5" width="6" height="5" rx="1.2" fill="white"/>
+          <rect x="14" y="5" width="6" height="5" rx="1.2" fill="white"/>
+          <rect x="23" y="5" width="6" height="5" rx="1.2" fill="white"/>
+          <rect x="32" y="5" width="6" height="5" rx="1.2" fill="white"/>
+          <!-- Row 2: 4 keys + wide right key -->
+          <rect x="5"  y="13" width="6" height="5" rx="1.2" fill="white"/>
+          <rect x="14" y="13" width="6" height="5" rx="1.2" fill="white"/>
+          <rect x="23" y="13" width="6" height="5" rx="1.2" fill="white"/>
+          <rect x="32" y="13" width="9" height="5" rx="1.2" fill="white"/>
+          <!-- Space bar -->
+          <rect x="10" y="19" width="26" height="4" rx="1.5" fill="white"/>
+          <!-- Down chevron -->
+          <path d="M19 31 L23 35.5 L27 31" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+
+    </div><!-- /ipad -->
+
+    <script>
+      const ipad        = document.getElementById('ipad');
+      const emailInput  = document.getElementById('emailInput');
+      const hideKbdBtn  = document.getElementById('hideKbdBtn');
+      const emailCard   = document.getElementById('emailCard');
+
+      // ── Helper: measure keyboard height once ──
+      let kbdMeasured = false;
+      function measureKeyboard() {
+        if (kbdMeasured) return;
+        const panel = document.getElementById('keyboardPanel');
+        panel.style.height = 'auto';
+        panel.style.overflow = 'visible';
+        const h = panel.scrollHeight;
+        panel.style.height = '';
+        panel.style.overflow = '';
+        ipad.style.setProperty('--kbd-h', h + 'px');
+        kbdMeasured = true;
+      }
+
+      // ── Open keyboard ──
+      emailInput.addEventListener('focus', () => {
+        measureKeyboard();
+        ipad.classList.add('keyboard-open');
+        setTimeout(() => {
+          emailCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 310);
+      });
+
+      // ── Hide keyboard ── (floating button + go key + ⌨ key)
+      function dismissKeyboard() {
+        emailInput.blur();
+        ipad.classList.remove('keyboard-open');
+      }
+
+      hideKbdBtn.addEventListener('click', dismissKeyboard);
+
+      // Clicking outside keyboard/field also dismisses
+      ipad.addEventListener('mousedown', (e) => {
+        if (!e.target.closest('.keyboard-panel') &&
+            !e.target.closest('.email-wrapper') &&
+            !e.target.closest('.float-kbd-btn')) {
+          dismissKeyboard();
+        }
+      });
+
+      // ── Key interactions ──
+      document.querySelectorAll('.kbd-tray .key[data-char]').forEach(key => {
+        key.addEventListener('mousedown', (e) => {
+          e.preventDefault();
+          emailInput.value += key.dataset.char;
+        });
+      });
+
+      document.querySelectorAll('.kbd-tray .key[data-action]').forEach(key => {
+        key.addEventListener('mousedown', (e) => {
+          e.preventDefault();
+          const action = key.dataset.action;
+          if (action === 'backspace') {
+            emailInput.value = emailInput.value.slice(0, -1);
+          } else if (action === 'go' || action === 'hidekbd') {
+            dismissKeyboard();
+          }
+        });
+      });
+
+      document.querySelector('.key.space').addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        emailInput.value += ' ';
+      });
+
+      document.querySelectorAll('.hint-chip').forEach(chip => {
+        chip.addEventListener('mousedown', (e) => {
+          e.preventDefault();
+          emailInput.value = chip.textContent.trim();
+        });
+      });
+    </script>
+  </body>
+</html>

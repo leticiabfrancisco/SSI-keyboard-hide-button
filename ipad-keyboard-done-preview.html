@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>iPad Keyboard "Done" Button — Reference Preview</title>
+  <style>
+    :root {
+      --bg: #f2f2f7;
+      --card: #ffffff;
+      --text: #1c1c1e;
+      --text-secondary: #6b6b70;
+      --accent: #34c759;      /* iOS green (matches your app screenshots) */
+      --accent-blue: #007aff; /* iOS system blue (default tint) */
+      --key-bg: #fcfcfe;
+      --key-shadow: rgba(0,0,0,0.28);
+      --kbd-bg: #d1d3d9;      /* iPadOS keyboard tray */
+      --toolbar-bg: #f7f7f9;
+      --hairline: rgba(0,0,0,0.12);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 40px 24px 80px;
+      -webkit-font-smoothing: antialiased;
+    }
+    .page-head { max-width: 1100px; margin: 0 auto 40px; }
+    .page-head h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.4px; }
+    .page-head p { margin-top: 8px; color: var(--text-secondary); font-size: 15px; max-width: 720px; }
+
+    .grid {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(440px, 1fr));
+      gap: 40px;
+    }
+
+    .demo { display: flex; flex-direction: column; gap: 14px; }
+    .demo-label { font-size: 13px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.6px; }
+    .demo-note  { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+
+    /* iPad frame */
+    .ipad {
+      position: relative;
+      background: #000;
+      border-radius: 34px;
+      padding: 12px;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.22);
+    }
+    .screen {
+      position: relative;
+      background: var(--bg);
+      border-radius: 22px;
+      overflow: hidden;
+      height: 560px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Status bar */
+    .status {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 22px 6px; font-size: 13px; font-weight: 600; color: var(--text);
+    }
+    .status .right { display: flex; gap: 6px; align-items: center; }
+
+    /* Nav */
+    .nav { display: flex; align-items: center; padding: 6px 18px 4px; }
+    .nav .close {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: #e9e9ee; display: flex; align-items: center; justify-content: center;
+      font-size: 17px; color: #3a3a3c;
+    }
+
+    /* Amount entry */
+    .entry { padding: 14px 22px 0; }
+    .entry .to { font-size: 15px; color: var(--text-secondary); }
+    .entry .to b { color: var(--text); font-weight: 600; }
+    .entry .row { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; }
+    .currency {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #eef7ee; border: 1px solid #d8ecd8; border-radius: 999px;
+      padding: 5px 12px 5px 8px; font-weight: 600; font-size: 15px;
+    }
+    .currency .flags { font-size: 15px; }
+    .amount { font-size: 52px; font-weight: 800; color: #9a9a9e; letter-spacing: -1px; }
+    .amount .cursor { color: var(--accent); font-weight: 400; animation: blink 1s steps(1) infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    /* spacer pushes keyboard down */
+    .spacer { flex: 1; }
+
+    /* ---- Pattern A: input accessory toolbar ---- */
+    .accessory {
+      display: flex; justify-content: flex-end; align-items: center;
+      background: var(--toolbar-bg);
+      border-top: 1px solid var(--hairline);
+      padding: 8px 16px;
+    }
+    .accessory .done-text {
+      font-size: 17px; font-weight: 600; color: var(--accent-blue);
+      padding: 4px 6px; cursor: pointer;
+    }
+
+    /* ---- Pattern B: floating Done pill ---- */
+    .float-wrap { position: relative; }
+    .done-pill {
+      position: absolute; right: 16px; top: -54px;
+      background: #e9e9ee; color: var(--text);
+      font-size: 16px; font-weight: 600;
+      padding: 10px 20px; border-radius: 14px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.18);
+      cursor: pointer;
+    }
+
+    /* ---- Pattern C: system hide-keyboard key (bottom-right of tray) ---- */
+
+    /* Numeric keypad tray */
+    .keypad {
+      background: var(--kbd-bg);
+      padding: 8px 6px 14px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    .key {
+      background: var(--key-bg);
+      border-radius: 6px;
+      min-height: 48px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      box-shadow: 0 1px 0 var(--key-shadow);
+      cursor: pointer; user-select: none;
+    }
+    .key .num { font-size: 24px; font-weight: 400; line-height: 1; }
+    .key .sub { font-size: 9px; letter-spacing: 1.5px; color: var(--text); margin-top: 3px; }
+    .key.plain { background: transparent; box-shadow: none; }
+    .key.func  { background: transparent; box-shadow: none; font-size: 22px; }
+    /* system hide-keyboard key */
+    .key.hidekbd { position: relative; }
+    .key.hidekbd svg { width: 26px; height: 26px; }
+
+    .legend {
+      max-width: 1100px; margin: 46px auto 0; padding: 22px 24px;
+      background: var(--card); border-radius: 16px; border: 1px solid var(--hairline);
+    }
+    .legend h2 { font-size: 16px; margin-bottom: 12px; }
+    .legend ul { list-style: none; display: grid; gap: 10px; }
+    .legend li { display: flex; gap: 10px; font-size: 14px; color: var(--text); line-height: 1.5; }
+    .legend li b { color: var(--text); }
+    .dot { flex: none; width: 10px; height: 10px; border-radius: 50%; margin-top: 5px; }
+    .dot.blue  { background: var(--accent-blue); }
+    .dot.grey  { background: #b5b5ba; }
+    .dot.green { background: var(--accent); }
+  </style>
+</head>
+<body>
+  <div class="page-head">
+    <h1>iPad keyboard “Done” button — reference patterns</h1>
+    <p>
+      When a numeric / decimal keypad is shown on iPad, there is no Return key to dismiss it.
+      Apps add a way to close the keyboard. Below are the three real patterns you'll see across
+      apps (Wise, Revolut, PayPal, Cash App, Apple Wallet, etc.), reproduced faithfully to the iPadOS look.
+    </p>
+  </div>
+
+  <div class="grid">
+
+    <!-- PATTERN A -->
+    <div class="demo">
+      <span class="demo-label">Pattern A · Input accessory toolbar</span>
+      <div class="ipad">
+        <div class="screen">
+          <div class="status">
+            <span>16:01</span>
+            <span class="right">••• 📶 🔋</span>
+          </div>
+          <div class="nav"><div class="close">✕</div></div>
+          <div class="entry">
+            <p class="to">You add to <b>Everyday account</b></p>
+            <div class="row">
+              <span class="currency"><span class="flags">🇧🇷🟢</span> BRL ⌄</span>
+              <span class="amount">0,00<span class="cursor">|</span></span>
+            </div>
+          </div>
+          <div class="spacer"></div>
+
+          <!-- toolbar pinned directly above keyboard -->
+          <div class="accessory">
+            <span class="done-text">Done</span>
+          </div>
+          <div class="keypad">
+            <div class="key"><span class="num">1</span></div>
+            <div class="key"><span class="num">2</span><span class="sub">ABC</span></div>
+            <div class="key"><span class="num">3</span><span class="sub">DEF</span></div>
+            <div class="key"><span class="num">4</span><span class="sub">GHI</span></div>
+            <div class="key"><span class="num">5</span><span class="sub">JKL</span></div>
+            <div class="key"><span class="num">6</span><span class="sub">MNO</span></div>
+            <div class="key"><span class="num">7</span><span class="sub">PQRS</span></div>
+            <div class="key"><span class="num">8</span><span class="sub">TUV</span></div>
+            <div class="key"><span class="num">9</span><span class="sub">WXYZ</span></div>
+            <div class="key func">,</div>
+            <div class="key"><span class="num">0</span></div>
+            <div class="key func">⌫</div>
+          </div>
+        </div>
+      </div>
+      <p class="demo-note">
+        A <b>UIToolbar</b> set as the field's <code>inputAccessoryView</code>. The “Done” text button sits on the
+        trailing edge and dismisses the keyboard. This is Apple's recommended pattern for numeric fields.
+      </p>
+    </div>
+
+    <!-- PATTERN B -->
+    <div class="demo">
+      <span class="demo-label">Pattern B · Floating “Done” pill (your screenshot)</span>
+      <div class="ipad">
+        <div class="screen">
+          <div class="status">
+            <span>16:01</span>
+            <span class="right">••• 📶 🔋</span>
+          </div>
+          <div class="nav"><div class="close">✕</div></div>
+          <div class="entry">
+            <p class="to">You add to <b>Everyday account</b></p>
+            <div class="row">
+              <span class="currency"><span class="flags">🇧🇷🟢</span> BRL ⌄</span>
+              <span class="amount">0,00<span class="cursor">|</span></span>
+            </div>
+          </div>
+          <div class="spacer"></div>
+
+          <div class="float-wrap">
+            <div class="done-pill">Done</div>
+            <div class="keypad">
+              <div class="key"><span class="num">1</span></div>
+              <div class="key"><span class="num">2</span><span class="sub">ABC</span></div>
+              <div class="key"><span class="num">3</span><span class="sub">DEF</span></div>
+              <div class="key"><span class="num">4</span><span class="sub">GHI</span></div>
+              <div class="key"><span class="num">5</span><span class="sub">JKL</span></div>
+              <div class="key"><span class="num">6</span><span class="sub">MNO</span></div>
+              <div class="key"><span class="num">7</span><span class="sub">PQRS</span></div>
+              <div class="key"><span class="num">8</span><span class="sub">TUV</span></div>
+              <div class="key"><span class="num">9</span><span class="sub">WXYZ</span></div>
+              <div class="key func">,</div>
+              <div class="key"><span class="num">0</span></div>
+              <div class="key func">⌫</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="demo-note">
+        A custom rounded button floating just above the keypad (bottom-right). This is the exact pattern in your
+        screenshot — visually distinct, easy to reach with a thumb. Tapping it calls <code>resignFirstResponder()</code>.
+      </p>
+    </div>
+
+    <!-- PATTERN C -->
+    <div class="demo">
+      <span class="demo-label">Pattern C · iPadOS system hide-keyboard key</span>
+      <div class="ipad">
+        <div class="screen">
+          <div class="status">
+            <span>16:01</span>
+            <span class="right">••• 📶 🔋</span>
+          </div>
+          <div class="nav"><div class="close">✕</div></div>
+          <div class="entry">
+            <p class="to">You add to <b>Everyday account</b></p>
+            <div class="row">
+              <span class="currency"><span class="flags">🇪🇺🟢</span> EUR ⌄</span>
+              <span class="amount">0,00<span class="cursor">|</span></span>
+            </div>
+          </div>
+          <div class="spacer"></div>
+
+          <div class="keypad">
+            <div class="key"><span class="num">1</span></div>
+            <div class="key"><span class="num">2</span><span class="sub">ABC</span></div>
+            <div class="key"><span class="num">3</span><span class="sub">DEF</span></div>
+            <div class="key"><span class="num">4</span><span class="sub">GHI</span></div>
+            <div class="key"><span class="num">5</span><span class="sub">JKL</span></div>
+            <div class="key"><span class="num">6</span><span class="sub">MNO</span></div>
+            <div class="key"><span class="num">7</span><span class="sub">PQRS</span></div>
+            <div class="key"><span class="num">8</span><span class="sub">TUV</span></div>
+            <div class="key"><span class="num">9</span><span class="sub">WXYZ</span></div>
+            <div class="key plain"></div>
+            <div class="key"><span class="num">0</span></div>
+            <div class="key func hidekbd" title="Hide keyboard">
+              <svg viewBox="0 0 28 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="1" y="1" width="26" height="12" rx="2.5" stroke="#3a3a3c" stroke-width="1.4"/>
+                <circle cx="6" cy="5" r="0.9" fill="#3a3a3c"/><circle cx="10" cy="5" r="0.9" fill="#3a3a3c"/>
+                <circle cx="14" cy="5" r="0.9" fill="#3a3a3c"/><circle cx="18" cy="5" r="0.9" fill="#3a3a3c"/>
+                <circle cx="22" cy="5" r="0.9" fill="#3a3a3c"/>
+                <rect x="9" y="8.5" width="10" height="1.6" rx="0.8" fill="#3a3a3c"/>
+                <path d="M14 19 l-3.5 -4 h7 z" fill="#3a3a3c"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="demo-note">
+        On iPad, the system itself often places a <b>hide-keyboard key</b> (keyboard icon with a down chevron) in the
+        bottom-right of the tray. It's provided by iPadOS — you don't build it. Apps still add Pattern A/B for clarity.
+      </p>
+    </div>
+
+  </div>
+
+  <div class="legend">
+    <h2>Which one is in your screenshot?</h2>
+    <ul>
+      <li><span class="dot green"></span><span><b>Pattern B — the floating “Done” pill.</b> That's what your Wise-style screenshot shows: a rounded grey button hovering above the keypad, on the trailing side.</span></li>
+      <li><span class="dot blue"></span><span><b>Pattern A</b> is Apple's recommended approach (toolbar “Done”), and is what most banking/fintech apps use on forms with multiple fields.</span></li>
+      <li><span class="dot grey"></span><span><b>Pattern C</b> is the OS-level key — always available on iPad regardless of the app.</span></li>
+    </ul>
+  </div>
+</body>
+</html>

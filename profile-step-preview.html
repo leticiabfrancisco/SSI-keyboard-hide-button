@@ -1,0 +1,811 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>iPad — Profile Step (Pattern A: Input Accessory Toolbar)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet" />
+    <style>
+      /* ── Planet / Solar DS tokens ── */
+      :root {
+        --surface:        #f4f4f5;
+        --paper:          #fafafa;
+        --text:           #18181b;
+        --text-secondary: #52525b;
+        --divider:        #e4e4e7;
+        --outline-low:    #a1a1aa;
+        --primary:        #18181b;
+        --blue:           #007aff; /* iOS system blue for Done */
+        /* CornerLightning elevation-5 */
+        --shadow-card:
+          rgba(54, 48, 163, 0)    171px 244px 83px 0px,
+          rgba(54, 48, 163, 0.01) 109px 156px 76px 0px,
+          rgba(54, 48, 163, 0.02)  62px  88px 64px 0px,
+          rgba(54, 48, 163, 0.03)  27px  39px 48px 0px,
+          rgba(54, 48, 163, 0.04)   7px  10px 26px 0px;
+      }
+
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+
+      body {
+        background: #d1d1d6;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        font-family: 'Inter', sans-serif;
+        color: var(--text);
+        padding: 32px;
+      }
+
+      .ms {
+        font-family: 'Material Symbols Rounded';
+        font-size: 22px;
+        line-height: 1;
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        user-select: none;
+      }
+
+      /* ── iPad landscape shell (1194×834 inner) ── */
+      .ipad {
+        width: 1214px;
+        height: 854px;
+        background: var(--surface);
+        border-radius: 20px;
+        box-shadow: 0 40px 80px -20px rgba(0,0,0,0.45),
+                    inset 0 0 0 1px rgba(255,255,255,0.10);
+        border: 10px solid #2a2a2c;
+        overflow: hidden;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* Home-bar pill */
+      .home-bar {
+        position: absolute;
+        bottom: 6px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 120px;
+        height: 4px;
+        border-radius: 2px;
+        background: rgba(0,0,0,0.25);
+        z-index: 10;
+      }
+
+      /* ── PageHead — 57px ── */
+      .topbar {
+        flex-shrink: 0;
+        height: 57px;
+        background: var(--paper);
+        border-bottom: 1px solid var(--divider);
+        display: flex;
+        align-items: center;
+        padding: 0 16px;
+        gap: 8px;
+      }
+
+      /* Planet logo */
+      .planet-logo { width: 24px; height: 24px; flex-shrink: 0; }
+      .planet-logo img { width: 24px; height: 24px; display: block; }
+
+      .topbar-title {
+        font-size: 17px;
+        font-weight: 700;
+        letter-spacing: -0.17px;
+      }
+
+      /* ── Content area — scrollable ── */
+      .content-wrap {
+        flex: 1;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 32px 24px 0;
+        transition: padding-bottom 280ms ease;
+      }
+
+      /* When keyboard is open, content scrolls up */
+      .ipad.keyboard-open .content-wrap {
+        padding-bottom: 0;
+      }
+
+      .content-inner {
+        width: 100%;
+        max-width: 800px;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+        padding-bottom: 32px;
+      }
+
+      /* ── Stepper ── */
+      .stepper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        width: 384px;
+        margin: 0 auto 32px;
+      }
+
+      .step { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+
+      .step-circle {
+        width: 28px; height: 28px; border-radius: 50%;
+        background: #18181b; color: #fff;
+        font-size: 12px; font-weight: 600;
+        display: flex; align-items: center; justify-content: center;
+        flex-shrink: 0;
+      }
+
+      .step.future .step-circle { background: var(--outline-low); }
+
+      .step-label { font-size: 13px; font-weight: 500; color: var(--text-secondary); white-space: nowrap; }
+      .step.active .step-label { color: var(--text); font-weight: 700; }
+
+      .step-dash { font-size: 13px; color: var(--text-secondary); flex-shrink: 0; }
+
+      /* ── Card shell ── */
+      .card {
+        background: var(--paper);
+        border-radius: 24px;
+        box-shadow: var(--shadow-card);
+        padding: 24px;
+      }
+
+      .card-title {
+        font-size: 24px;
+        font-weight: 500;
+        letter-spacing: -1px;
+        line-height: 1.4;
+        color: var(--text);
+        margin-bottom: 16px;
+      }
+
+      /* ── Personal details grid ── */
+      .details-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0;
+        border-radius: 8px;
+        overflow: hidden;
+      }
+
+      .detail-cell {
+        padding: 12px 16px;
+      }
+
+      .detail-label { font-size: 12px; font-weight: 500; color: var(--text-secondary); margin-bottom: 4px; }
+      .detail-value { font-size: 14px; font-weight: 500; color: var(--text); display: flex; align-items: center; gap: 6px; }
+
+      /* Rescan button */
+      .btn-rescan {
+        width: 100%;
+        height: 48px;
+        margin-top: 16px;
+        border: 1.5px solid var(--divider);
+        border-radius: 8px;
+        background: transparent;
+        color: var(--text);
+        font-size: 15px;
+        font-weight: 500;
+        font-family: 'Inter', sans-serif;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        letter-spacing: -0.1px;
+      }
+      .btn-rescan:hover { background: #f4f4f5; }
+
+      /* ── Country dropdown ── */
+      .dropdown-field {
+        position: relative;
+        border: 1px solid var(--divider);
+        border-radius: 8px;
+        padding: 14px 16px;
+        background: transparent;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+      }
+      .dropdown-label {
+        position: absolute;
+        top: -8px;
+        left: 12px;
+        background: var(--paper);
+        padding: 0 4px;
+        font-size: 12px;
+        color: var(--text-secondary);
+        font-weight: 500;
+      }
+      .dropdown-value { display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 400; }
+      .dropdown-value .flag { font-size: 18px; }
+
+      /* ── Email field ── */
+      .email-wrapper {
+        position: relative;
+        border-radius: 8px;
+        transition: box-shadow 200ms ease, border-color 200ms ease;
+      }
+      .email-wrapper input {
+        width: 100%;
+        height: 56px;
+        padding: 14px 16px;
+        border: 1px solid var(--divider);
+        border-radius: 8px;
+        font-size: 16px;
+        font-family: 'Inter', sans-serif;
+        color: var(--text);
+        background: transparent;
+        outline: none;
+        transition: border-color 200ms ease;
+      }
+      .email-wrapper input:focus {
+        border-color: var(--primary);
+        border-width: 2px;
+      }
+      .email-wrapper .field-label {
+        position: absolute;
+        top: -8px;
+        left: 12px;
+        background: var(--paper);
+        padding: 0 4px;
+        font-size: 12px;
+        color: var(--text-secondary);
+        font-weight: 500;
+        pointer-events: none;
+        transition: color 200ms ease;
+      }
+      .email-wrapper input:focus ~ .field-label {
+        color: var(--primary);
+      }
+
+      /* ── Footer — 104px ── */
+      .footer {
+        flex-shrink: 0;
+        height: 104px;
+        border-top: 1px solid var(--divider);
+        background: var(--paper);
+        padding: 0 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: relative;
+        z-index: 5;
+      }
+
+      .btn-cancel {
+        height: 52px; padding: 0 24px;
+        border: 1.5px solid var(--divider); border-radius: 8px;
+        background: transparent; color: var(--text);
+        font-size: 18px; font-weight: 600; font-family: 'Inter', sans-serif;
+        cursor: pointer; letter-spacing: -0.1px;
+      }
+
+      .footer-right { display: flex; align-items: center; gap: 16px; }
+
+      .btn-back {
+        height: 52px; padding: 0 16px;
+        border: none; background: transparent; color: var(--text);
+        font-size: 18px; font-weight: 600; font-family: 'Inter', sans-serif;
+        cursor: pointer; display: flex; align-items: center; gap: 4px;
+        letter-spacing: -0.1px;
+      }
+
+      .btn-next {
+        height: 52px; padding: 0 32px;
+        border: none; border-radius: 8px;
+        background: var(--primary); color: #fff;
+        font-size: 18px; font-weight: 600; font-family: 'Inter', sans-serif;
+        cursor: pointer; letter-spacing: -0.1px;
+        box-shadow: var(--shadow-card);
+      }
+
+      /* ══════════════════════════════════════════════════════
+         PATTERN A — Input Accessory Toolbar + Keyboard
+         ══════════════════════════════════════════════════════
+
+         The keyboard panel lives INSIDE the iPad flex column
+         (after the footer), so it physically pushes the content
+         area up — exactly how iPadOS reduces the available
+         viewport when the software keyboard appears.
+
+         Height animates 0 → measured value; content-wrap
+         (flex:1 + overflow-y:auto) shrinks and scrolls so the
+         focused email card stays visible.
+      */
+      .keyboard-panel {
+        flex-shrink: 0;
+        overflow: hidden;
+        height: 0;
+        display: flex;
+        flex-direction: column;
+        transition: height 300ms cubic-bezier(0.32, 0.72, 0, 1);
+      }
+
+      .ipad.keyboard-open .keyboard-panel {
+        height: var(--kbd-h, 345px);
+      }
+
+      /* ─── Accessory toolbar ─── */
+      .accessory-toolbar {
+        background: #f6f6f6;
+        border-top: 1px solid rgba(0,0,0,0.12);
+        border-bottom: 1px solid rgba(0,0,0,0.10);
+        height: 56px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 8px;
+      }
+      .accessory-done {
+        font-size: 17px;
+        font-weight: 600;
+        color: var(--blue);
+        font-family: 'Inter', sans-serif;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 4px 8px;
+        border-radius: 6px;
+        line-height: 1;
+      }
+      .accessory-done:hover  { background: rgba(0,122,255,0.08); }
+      .accessory-done:active { opacity: 0.7; }
+
+      /* Accessory toolbar action groups */
+      .accessory-leading, .accessory-trailing {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+      }
+      .acc-btn {
+        height: 34px;
+        min-width: 34px;
+        padding: 0 8px;
+        background: none;
+        border: none;
+        font-size: 18px;
+        color: rgba(0,0,0,0.55);
+        cursor: pointer;
+        border-radius: 6px;
+        font-family: 'Inter', sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .acc-btn:hover  { background: rgba(0,0,0,0.06); }
+      .acc-btn:active { opacity: 0.6; }
+      .acc-divider {
+        width: 1px; height: 20px;
+        background: rgba(0,0,0,0.18);
+        margin: 0 6px;
+      }
+
+      /* ─── iPad keyboard tray — realistic iPadOS landscape QWERTY ─── */
+      .kbd-tray {
+        background: #cdd0d5;
+        padding: 8px 6px 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+      }
+
+      .kbd-row {
+        display: flex;
+        gap: 6px;
+        align-items: stretch;
+        height: 54px;
+      }
+      .kbd-row.bottom { height: 48px; }
+
+      /* Base key */
+      .key {
+        background: #fff;
+        border-radius: 7px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 1px 0 1px rgba(0,0,0,0.32);
+        cursor: pointer;
+        user-select: none;
+        -webkit-user-select: none;
+        font-family: 'Inter', sans-serif;
+        color: var(--text);
+        font-size: 22px;
+        font-weight: 300;
+        transition: background 60ms;
+        position: relative;
+        flex: 1;
+      }
+      .key:active { background: #d8dbe0; }
+
+      /* Letter key — hint floats at top, letter stays centred */
+      .key.letter { padding-top: 10px; }
+
+      .k-hint {
+        position: absolute;
+        top: 5px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 11px;
+        font-weight: 400;
+        color: rgba(0,0,0,0.38);
+        line-height: 1;
+        pointer-events: none;
+      }
+
+      /* Modifier keys */
+      .key.mod {
+        background: #adb4be;
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--text);
+        letter-spacing: -0.2px;
+      }
+      .key.mod:active { background: #9ba3ad; }
+
+      /* Blue go key */
+      .key.go {
+        background: #007aff;
+        color: #fff;
+        font-size: 16px;
+        font-weight: 500;
+      }
+      .key.go:active { background: #0066d6; }
+
+      /* Space bar */
+      .key.space { font-size: 0; }
+
+      /* Key-size helpers */
+      .k-tab  { flex: 0 0 7.2%; }
+      .k-del  { flex: 0 0 8.2%; }
+      .k-caps { flex: 0 0 9.3%; }
+      .k-go   { flex: 0 0 12.2%; }
+      .k-shft { flex: 0 0 11.8%; }
+      .k-glb  { flex: 0 0 4.3%; }
+      .k-num  { flex: 0 0 5.4%; }
+      .k-mic  { flex: 0 0 4.3%; }
+      .k-dsh  { flex: 0 0 4.5%; }
+      .k-kbd  { flex: 0 0 5.4%; }
+
+      /* ── Hint strip above keyboard ── */
+      .kbd-hint-strip {
+        background: #d1d3d9;
+        border-top: 1px solid rgba(0,0,0,0.12);
+        height: 44px;
+        display: flex;
+        align-items: center;
+        padding: 0 8px;
+        gap: 8px;
+      }
+
+      .hint-chip {
+        flex: 1;
+        height: 32px;
+        background: #d1d3d9;
+        border-radius: 5px;
+        border: 0.5px solid rgba(0,0,0,0.18);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 15px;
+        color: var(--text);
+        cursor: pointer;
+        letter-spacing: -0.2px;
+      }
+
+      /* ── "Tap email to try" helper label ── */
+
+    </style>
+  </head>
+  <body>
+    <div class="ipad" id="ipad">
+      <div class="home-bar"></div>
+
+      <!-- PageHead -->
+      <div class="topbar">
+        <div class="planet-logo">
+          <img src="assets/planet-p-icon-black.svg" alt="Planet" />
+        </div>
+        <span class="topbar-title">Tax Free form</span>
+      </div>
+
+      <!-- Content -->
+      <div class="content-wrap" id="contentWrap">
+        <div class="content-inner">
+
+          <!-- Stepper: step 1 done, step 2 active, 3+4 future -->
+          <div class="stepper">
+            <div class="step done">
+              <div class="step-circle">✓</div>
+              <span class="step-label">Receipts</span>
+            </div>
+            <span class="step-dash">–</span>
+            <div class="step active">
+              <div class="step-circle">2</div>
+              <span class="step-label">Profile</span>
+            </div>
+            <span class="step-dash">–</span>
+            <div class="step future">
+              <div class="step-circle">3</div>
+              <span class="step-label">Refund</span>
+            </div>
+            <span class="step-dash">–</span>
+            <div class="step future">
+              <div class="step-circle">4</div>
+              <span class="step-label">Form</span>
+            </div>
+          </div>
+
+          <!-- Card 1: Personal details -->
+          <div class="card">
+            <p class="card-title">Confirm personal details</p>
+
+            <div class="details-grid">
+              <div class="detail-cell">
+                <p class="detail-label">Document number</p>
+                <p class="detail-value">P123456AA</p>
+              </div>
+              <div class="detail-cell">
+                <p class="detail-label">Document date of expiry</p>
+                <p class="detail-value">03/12/2027</p>
+              </div>
+              <div class="detail-cell">
+                <p class="detail-label">Document country</p>
+                <p class="detail-value">🇬🇧 United Kingdom</p>
+              </div>
+              <div class="detail-cell">
+                <p class="detail-label">Date of birth</p>
+                <p class="detail-value">01/01/1990</p>
+              </div>
+              <div class="detail-cell">
+                <p class="detail-label">Given names</p>
+                <p class="detail-value">Sarah</p>
+              </div>
+              <div class="detail-cell">
+                <p class="detail-label">Surname</p>
+                <p class="detail-value">Martin</p>
+              </div>
+            </div>
+
+            <button class="btn-rescan">
+              <span class="ms">photo_camera</span>
+              Try scanning again
+            </button>
+          </div>
+
+          <!-- Card 2: Country of residence -->
+          <div class="card">
+            <p class="card-title">Choose your country of residence</p>
+            <div class="dropdown-field">
+              <span class="dropdown-label">Country of residence *</span>
+              <div class="dropdown-value">
+                <span class="flag">🇬🇧</span>
+                United Kingdom
+              </div>
+              <span class="ms" style="color:var(--text-secondary);font-size:20px;">keyboard_arrow_down</span>
+            </div>
+          </div>
+
+          <!-- Card 3: Email -->
+          <div class="card" id="emailCard">
+            <p class="card-title">Add an email to get your form</p>
+            <p style="font-size:14px;color:var(--text-secondary);margin-bottom:16px;">No spam or marketing emails</p>
+            <div class="email-wrapper">
+              <input
+                type="email"
+                id="emailInput"
+                autocomplete="off"
+                placeholder=" "
+              />
+              <span class="field-label">Email *</span>
+            </div>
+          </div>
+
+        </div>
+      </div><!-- /content-wrap -->
+
+      <!-- Footer -->
+      <div class="footer">
+        <button class="btn-cancel">Cancel</button>
+        <div class="footer-right">
+          <button class="btn-back">
+            <span class="ms" style="font-size:20px;margin-right:2px;">chevron_left</span>
+            Back
+          </button>
+          <button class="btn-next">Next</button>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════
+           PATTERN A — Keyboard panel
+           Slides up from bottom, on top of footer.
+           Contains: accessory toolbar + suggestion strip + full QWERTY
+           ══════════════════════════════════════ -->
+      <div class="keyboard-panel" id="keyboardPanel">
+
+        <!-- ①  INPUT ACCESSORY TOOLBAR
+             Apple HIG: "Place custom controls above the keyboard… use a standard
+             toolbar to contain your controls — it automatically adopts Liquid Glass."
+             Done sits on the trailing edge with .prominent style (tinted).
+        -->
+        <div class="accessory-toolbar">
+          <!-- Leading: undo / redo / paste (standard iPadOS toolbar actions) -->
+          <div class="accessory-leading">
+            <button class="acc-btn" title="Undo">↩</button>
+            <button class="acc-btn" title="Redo">↪</button>
+            <button class="acc-btn" title="Paste">
+              <span class="ms" style="font-size:19px;font-variation-settings:'FILL' 0,'wght' 300,'GRAD' 0,'opsz' 24">content_paste</span>
+            </button>
+          </div>
+          <!-- Trailing: field navigation + Done -->
+          <div class="accessory-trailing">
+            <button class="acc-btn" title="Previous field">↑</button>
+            <button class="acc-btn" title="Next field">↓</button>
+            <div class="acc-divider"></div>
+            <button class="accessory-done" id="doneBtn">Hide</button>
+          </div>
+        </div>
+
+        <!-- ②  Predictive text suggestion strip (standard iPadOS behaviour) -->
+        <div class="kbd-hint-strip">
+          <div class="hint-chip">gmail.com</div>
+          <div class="hint-chip">hotmail.com</div>
+          <div class="hint-chip">yahoo.com</div>
+        </div>
+
+        <!-- ③  QWERTY keyboard — realistic iPadOS landscape email layout -->
+        <div class="kbd-tray">
+
+          <!-- Row 1: tab | q(1) w(2) e(3) r(4) t(5) y(6) u(7) i(8) o(9) p(0) | delete -->
+          <div class="kbd-row">
+            <div class="key mod k-tab">tab</div>
+            <div class="key letter" data-char="q"><span class="k-hint">1</span>q</div>
+            <div class="key letter" data-char="w"><span class="k-hint">2</span>w</div>
+            <div class="key letter" data-char="e"><span class="k-hint">3</span>e</div>
+            <div class="key letter" data-char="r"><span class="k-hint">4</span>r</div>
+            <div class="key letter" data-char="t"><span class="k-hint">5</span>t</div>
+            <div class="key letter" data-char="y"><span class="k-hint">6</span>y</div>
+            <div class="key letter" data-char="u"><span class="k-hint">7</span>u</div>
+            <div class="key letter" data-char="i"><span class="k-hint">8</span>i</div>
+            <div class="key letter" data-char="o"><span class="k-hint">9</span>o</div>
+            <div class="key letter" data-char="p"><span class="k-hint">0</span>p</div>
+            <div class="key mod k-del" data-action="backspace">delete</div>
+          </div>
+
+          <!-- Row 2: caps lock | a(@) s(#) d($) f(&) g(*) h(() j()) k(') l(") | go -->
+          <div class="kbd-row">
+            <div class="key mod k-caps">caps lock</div>
+            <div class="key letter" data-char="a"><span class="k-hint">@</span>a</div>
+            <div class="key letter" data-char="s"><span class="k-hint">#</span>s</div>
+            <div class="key letter" data-char="d"><span class="k-hint">$</span>d</div>
+            <div class="key letter" data-char="f"><span class="k-hint">&amp;</span>f</div>
+            <div class="key letter" data-char="g"><span class="k-hint">*</span>g</div>
+            <div class="key letter" data-char="h"><span class="k-hint">(</span>h</div>
+            <div class="key letter" data-char="j"><span class="k-hint">)</span>j</div>
+            <div class="key letter" data-char="k"><span class="k-hint">'</span>k</div>
+            <div class="key letter" data-char="l"><span class="k-hint">"</span>l</div>
+            <div class="key mod go k-go" data-action="go">done</div>
+          </div>
+
+          <!-- Row 3: shift | z(%) x(-) c(+) v(=) b(/) n(;) m(:) @(,) .(?) | shift -->
+          <div class="kbd-row">
+            <div class="key mod k-shft">shift</div>
+            <div class="key letter" data-char="z"><span class="k-hint">%</span>z</div>
+            <div class="key letter" data-char="x"><span class="k-hint">-</span>x</div>
+            <div class="key letter" data-char="c"><span class="k-hint">+</span>c</div>
+            <div class="key letter" data-char="v"><span class="k-hint">=</span>v</div>
+            <div class="key letter" data-char="b"><span class="k-hint">/</span>b</div>
+            <div class="key letter" data-char="n"><span class="k-hint">;</span>n</div>
+            <div class="key letter" data-char="m"><span class="k-hint">:</span>m</div>
+            <div class="key letter" data-char="@"><span class="k-hint">,</span>@</div>
+            <div class="key letter" data-char="."><span class="k-hint">?</span>.</div>
+            <div class="key mod k-shft">shift</div>
+          </div>
+
+          <!-- Row 4: globe | .?123 | mic | space | – | - | ⌨ -->
+          <div class="kbd-row bottom">
+            <div class="key mod k-glb">🌐</div>
+            <div class="key mod k-num">.?123</div>
+            <div class="key mod k-mic">🎤</div>
+            <div class="key space"></div>
+            <div class="key mod k-dsh" data-char="–">–</div>
+            <div class="key mod k-dsh" data-char="-">-</div>
+            <div class="key mod k-kbd" data-action="hidekbd">⌨</div>
+          </div>
+
+        </div>
+      </div>
+
+
+    </div><!-- /ipad -->
+
+    <script>
+      const ipad         = document.getElementById('ipad');
+      const emailInput   = document.getElementById('emailInput');
+      const doneBtn      = document.getElementById('doneBtn');
+      const contentWrap  = document.getElementById('contentWrap');
+      const emailCard    = document.getElementById('emailCard');
+
+      // Measure keyboard height once (needed for the height animation)
+      let kbdMeasured = false;
+      function measureKeyboard() {
+        if (kbdMeasured) return;
+        const panel = document.getElementById('keyboardPanel');
+        // Reveal off-screen to get scrollHeight, then hide again
+        panel.style.cssText = 'height:auto;visibility:hidden;pointer-events:none';
+        const h = panel.scrollHeight;
+        panel.style.cssText = '';
+        ipad.style.setProperty('--kbd-h', h + 'px');
+        kbdMeasured = true;
+      }
+
+      // Open keyboard — push content up, scroll email card into view
+      emailInput.addEventListener('focus', () => {
+        measureKeyboard();
+        ipad.classList.add('keyboard-open');
+        // After the keyboard finishes sliding up, scroll the email card into view
+        setTimeout(() => {
+          emailCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 310);
+      });
+
+      // Done button dismisses keyboard (like resignFirstResponder)
+      doneBtn.addEventListener('click', () => {
+        emailInput.blur();
+        ipad.classList.remove('keyboard-open');
+      });
+
+      // Clicking outside the keyboard/field also dismisses
+      ipad.addEventListener('mousedown', (e) => {
+        if (!e.target.closest('.keyboard-panel') && !e.target.closest('.email-wrapper')) {
+          emailInput.blur();
+          ipad.classList.remove('keyboard-open');
+        }
+      });
+
+      // Letter & symbol keys (data-char)
+      document.querySelectorAll('.kbd-tray .key[data-char]').forEach(key => {
+        key.addEventListener('mousedown', (e) => {
+          e.preventDefault();
+          emailInput.value += key.dataset.char;
+        });
+      });
+
+      // Action keys (data-action)
+      document.querySelectorAll('.kbd-tray .key[data-action]').forEach(key => {
+        key.addEventListener('mousedown', (e) => {
+          e.preventDefault();
+          const action = key.dataset.action;
+          if (action === 'backspace') {
+            emailInput.value = emailInput.value.slice(0, -1);
+          } else if (action === 'go' || action === 'hidekbd') {
+            doneBtn.click();
+          }
+        });
+      });
+
+      // Space bar
+      document.querySelector('.key.space').addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        emailInput.value += ' ';
+      });
+
+      // Suggestion chips
+      document.querySelectorAll('.hint-chip').forEach(chip => {
+        chip.addEventListener('mousedown', (e) => {
+          e.preventDefault();
+          emailInput.value = emailInput.value + chip.textContent.trim();
+        });
+      });
+    </script>
+  </body>
+</html>

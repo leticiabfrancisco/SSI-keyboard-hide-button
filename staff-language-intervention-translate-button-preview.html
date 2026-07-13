@@ -1,0 +1,505 @@
+<!doctype html>
+<html lang="ar">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Staff Language Intervention — Translate Button Preview</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --surface: #f4f4f5;
+        --paper: #fafafa;
+        --text: #18181b;
+        --text-secondary: #52525b;
+        --divider: #e4e4e7;
+        --outline-low: #a1a1aa;
+        --primary: #18181b;
+        --danger: #c81e1e;
+        --danger-strong: #b91c1c;
+        --danger-soft: #fef2f2;
+        --shadow-card:
+          rgba(54, 48, 163, 0) 171px 244px 83px 0px,
+          rgba(54, 48, 163, 0.01) 109px 156px 76px 0px,
+          rgba(54, 48, 163, 0.02) 62px 88px 64px 0px,
+          rgba(54, 48, 163, 0.03) 27px 39px 48px 0px,
+          rgba(54, 48, 163, 0.04) 7px 10px 26px 0px;
+        --shadow-btn:
+          rgba(54, 48, 163, 0) 51px 73px 25px 0px,
+          rgba(54, 48, 163, 0) 33px 47px 23px 0px,
+          rgba(54, 48, 163, 0.02) 18px 26px 19px 0px,
+          rgba(54, 48, 163, 0.03) 8px 12px 14px 0px,
+          rgba(54, 48, 163, 0.03) 2px 3px 8px 0px;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: radial-gradient(circle at top, #ffffff 0%, #ebebed 40%, #e2e2e5 100%);
+        font-family: 'Inter', sans-serif;
+        color: var(--text);
+      }
+
+      .ms {
+        font-family: 'Material Symbols Rounded';
+        font-size: 20px;
+        line-height: 1;
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+        user-select: none;
+      }
+
+      .shell {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .topbar {
+        height: 56px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 12px;
+        padding: 0 24px;
+        border-bottom: 1px solid var(--divider);
+        background: rgba(244, 244, 245, 0.92);
+      }
+
+      .topbar-logo {
+        width: 26px;
+        height: 26px;
+        object-fit: contain;
+      }
+
+      .topbar-title {
+        font-size: 16px;
+        letter-spacing: -0.16px;
+      }
+
+      .planet-mark {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: var(--primary);
+        color: #fff;
+        display: grid;
+        place-items: center;
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .error-banner {
+        align-self: center;
+        margin-top: 20px;
+        display: inline-flex;
+        align-items: center;
+        gap: 14px;
+        min-height: 48px;
+        padding: 0 10px 0 18px;
+        border-radius: 8px;
+        background: var(--danger);
+        color: #fff;
+        box-shadow: var(--shadow-btn);
+      }
+
+      .error-banner-title {
+        font-size: 18px;
+        font-weight: 600;
+        letter-spacing: -0.18px;
+      }
+
+      .translate-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 40px;
+        padding: 0 18px;
+        border: 1px solid #fff;
+        border-radius: 8px;
+        background: transparent;
+        color: #fff;
+        font: inherit;
+        font-size: 15px;
+        font-weight: 500;
+        letter-spacing: -0.1px;
+        cursor: pointer;
+        transition: background 0.15s ease, color 0.15s ease;
+        touch-action: manipulation;
+      }
+
+      .translate-btn:hover {
+        background: rgba(255, 255, 255, 0.14);
+      }
+
+      .translate-btn:active {
+        background: rgba(255, 255, 255, 0.22);
+      }
+
+      .translate-btn .ms {
+        font-size: 20px;
+      }
+
+      .translate-btn.is-active {
+        background: #fff;
+        color: var(--danger-strong);
+      }
+
+      .error-banner.is-en .banner-close {
+        order: 3;
+      }
+
+      .progress {
+        margin: 16px auto 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--text-secondary);
+        font-size: 15px;
+      }
+
+      .step-chip {
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: 600;
+        background: var(--outline-low);
+        color: #fff;
+      }
+
+      .step-chip.active {
+        background: var(--primary);
+      }
+
+      .main {
+        flex: 1;
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        padding: 28px 24px 120px;
+      }
+
+      .card {
+        width: min(100%, 774px);
+        background: rgba(250, 250, 250, 0.92);
+        border-radius: 8px;
+        box-shadow: var(--shadow-card);
+        padding: 34px 46px 30px;
+      }
+
+      .card-grid {
+        display: grid;
+        grid-template-columns: 220px 1fr;
+        gap: 28px;
+        align-items: center;
+      }
+
+      .receipt-illus {
+        width: 160px;
+        height: 210px;
+        border: 4px solid #cfd4dc;
+        border-radius: 10px 10px 0 0;
+        position: relative;
+        margin: 0 auto;
+      }
+
+      .receipt-illus::before {
+        content: 'RECEIPT';
+        position: absolute;
+        top: 16px;
+        left: 0;
+        right: 0;
+        text-align: center;
+        font-size: 17px;
+        font-weight: 700;
+        color: #8b93a1;
+      }
+
+      .receipt-illus::after {
+        content: '';
+        position: absolute;
+        left: 14px;
+        right: 14px;
+        bottom: 20px;
+        height: 42px;
+        background:
+          repeating-linear-gradient(
+            to right,
+            #b7bfca 0 4px,
+            transparent 4px 8px,
+            #b7bfca 8px 12px,
+            transparent 12px 15px
+          );
+        border-radius: 4px;
+      }
+
+      .receipt-line,
+      .receipt-line-short {
+        position: absolute;
+        left: 14px;
+        height: 4px;
+        background: #d8dde4;
+        border-radius: 999px;
+      }
+
+      .receipt-line:nth-child(1) { top: 52px; width: 78px; }
+      .receipt-line:nth-child(2) { top: 68px; width: 92px; }
+      .receipt-line:nth-child(3) { top: 84px; width: 110px; }
+      .receipt-line:nth-child(4) { top: 100px; width: 96px; }
+      .receipt-line:nth-child(5) { top: 132px; width: 84px; }
+      .receipt-line-short:nth-child(6) { top: 52px; right: 14px; left: auto; width: 18px; }
+      .receipt-line-short:nth-child(7) { top: 68px; right: 14px; left: auto; width: 14px; }
+      .receipt-line-short:nth-child(8) { top: 84px; right: 14px; left: auto; width: 18px; }
+      .receipt-line-short:nth-child(9) { top: 132px; right: 14px; left: auto; width: 30px; }
+
+      .receipt-tear {
+        position: absolute;
+        left: -4px;
+        right: -4px;
+        bottom: -13px;
+        height: 18px;
+        background:
+          radial-gradient(circle at 12px 0, transparent 9px, #cfd4dc 9px 11px, transparent 11px) 0 0 / 32px 18px repeat-x;
+      }
+
+      .copy h1 {
+        margin: 0 0 18px;
+        font-size: 28px;
+        line-height: 1.35;
+        font-weight: 400;
+        letter-spacing: -1px;
+      }
+
+      .primary-btn {
+        width: 100%;
+        min-height: 50px;
+        border: 0;
+        border-radius: 8px;
+        background: #060919;
+        color: #fff;
+        font: inherit;
+        font-size: 17px;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        box-shadow: var(--shadow-btn);
+        cursor: pointer;
+        touch-action: manipulation;
+      }
+
+      .footer {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 104px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 22px;
+        border-top: 1px solid var(--divider);
+        background: rgba(250, 250, 250, 0.92);
+      }
+
+      .footer.is-en {
+        flex-direction: row-reverse;
+      }
+
+      .footer-btn {
+        min-width: 86px;
+        min-height: 54px;
+        padding: 0 22px;
+        border-radius: 8px;
+        font: inherit;
+        font-size: 18px;
+        cursor: default;
+      }
+
+      .footer-btn.secondary {
+        border: 1px solid var(--outline-low);
+        background: transparent;
+        color: var(--text);
+      }
+
+      .footer-btn.primary {
+        border: 0;
+        background: var(--primary);
+        color: #fff;
+        box-shadow: var(--shadow-btn);
+      }
+
+      @media (max-width: 900px) {
+        .card {
+          padding: 24px;
+        }
+
+        .card-grid {
+          grid-template-columns: 1fr;
+          text-align: center;
+        }
+
+        .main {
+          padding-bottom: 32px;
+        }
+
+        .footer {
+          position: static;
+          padding: 20px 24px;
+          height: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <header class="topbar">
+        <img class="topbar-logo" src="assets/planet-p-icon-black.svg" alt="Planet" />
+        <div class="topbar-title">Tax Free form</div>
+      </header>
+
+      <div class="error-banner" id="error-banner" aria-live="polite">
+        <span class="ms banner-close">close</span>
+        <div class="error-banner-title" id="error-banner-title">أضف إيصالاً للمتابعة</div>
+        <button class="translate-btn" id="translate-button" type="button" aria-pressed="false" title="Translate">
+          <span class="ms">translate</span>
+          <span id="translate-button-label">EN</span>
+        </button>
+      </div>
+
+      <div class="progress" aria-label="Progress">
+        <span id="step-label-form">النموذج</span>
+        <span class="step-chip">4</span>
+        <span>–</span>
+        <span id="step-label-refund">الاسترداد</span>
+        <span class="step-chip">3</span>
+        <span>–</span>
+        <span id="step-label-profile">الملف الشخصي</span>
+        <span class="step-chip">2</span>
+        <span>–</span>
+        <span id="step-label-receipts">الإيصالات</span>
+        <span class="step-chip active">1</span>
+      </div>
+
+      <main class="main">
+        <section class="card" aria-labelledby="scan-title">
+          <div class="card-grid">
+            <div class="illustration-wrap" aria-hidden="true">
+              <div class="receipt-illus">
+                <div class="receipt-line"></div>
+                <div class="receipt-line"></div>
+                <div class="receipt-line"></div>
+                <div class="receipt-line"></div>
+                <div class="receipt-line"></div>
+                <div class="receipt-line-short"></div>
+                <div class="receipt-line-short"></div>
+                <div class="receipt-line-short"></div>
+                <div class="receipt-line-short"></div>
+                <div class="receipt-tear"></div>
+              </div>
+            </div>
+
+            <div class="copy">
+              <h1 id="scan-title">امسح الباركود الموجود على الإيصال</h1>
+              <button class="primary-btn" id="scan-button" type="button">
+                <span id="scan-button-label">بدء المسح</span>
+                <span class="ms">photo_camera</span>
+              </button>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer" id="footer">
+        <button class="footer-btn primary" id="next-button" type="button">التالي</button>
+        <button class="footer-btn secondary" id="cancel-button" type="button">إلغاء</button>
+      </footer>
+    </div>
+
+    <script>
+      const translateButton = document.getElementById('translate-button');
+      const footer = document.getElementById('footer');
+      const errorBanner = document.getElementById('error-banner');
+      let isEnglishSession = false;
+
+      const COPY = {
+        ar: {
+          'error-banner-title': 'أضف إيصالاً للمتابعة',
+          'step-label-form': 'النموذج',
+          'step-label-refund': 'الاسترداد',
+          'step-label-profile': 'الملف الشخصي',
+          'step-label-receipts': 'الإيصالات',
+          'scan-title': 'امسح الباركود الموجود على الإيصال',
+          'scan-button-label': 'بدء المسح',
+          'next-button': 'التالي',
+          'cancel-button': 'إلغاء',
+          'translate-button-label': 'EN',
+        },
+        en: {
+          'error-banner-title': 'Add a receipt to continue',
+          'step-label-form': 'Form',
+          'step-label-refund': 'Refund',
+          'step-label-profile': 'Profile',
+          'step-label-receipts': 'Receipts',
+          'scan-title': 'Scan the barcode on the receipt',
+          'scan-button-label': 'Start scan',
+          'next-button': 'Next',
+          'cancel-button': 'Cancel',
+          'translate-button-label': 'AR',
+        },
+      };
+
+      const setText = (id, value) => {
+        const element = document.getElementById(id);
+        if (element) {
+          element.textContent = value;
+        }
+      };
+
+      const REVERT_DELAY_MS = 3000;
+      let revertTimer = null;
+
+      const applyLanguage = (lang) => {
+        const copy = COPY[lang];
+        document.documentElement.setAttribute('lang', lang);
+
+        Object.keys(copy).forEach((key) => {
+          setText(key, copy[key]);
+        });
+
+        isEnglishSession = lang === 'en';
+        translateButton.classList.toggle('is-active', isEnglishSession);
+        translateButton.setAttribute('aria-pressed', String(isEnglishSession));
+        footer.classList.toggle('is-en', isEnglishSession);
+        errorBanner.classList.toggle('is-en', isEnglishSession);
+      };
+
+      const toggleLanguage = () => {
+        if (revertTimer) {
+          window.clearTimeout(revertTimer);
+          revertTimer = null;
+        }
+
+        const nextLang = isEnglishSession ? 'ar' : 'en';
+        applyLanguage(nextLang);
+
+        // After switching to English, automatically return to Arabic after 3s.
+        if (nextLang === 'en') {
+          revertTimer = window.setTimeout(() => {
+            revertTimer = null;
+            applyLanguage('ar');
+          }, REVERT_DELAY_MS);
+        }
+      };
+
+      translateButton.addEventListener('click', toggleLanguage);
+    </script>
+  </body>
+</html>
